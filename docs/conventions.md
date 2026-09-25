@@ -19,7 +19,7 @@ Feature planning → feature design (incl. edge-case analysis) → implementatio
 
 ## Branch Naming
 
-GitFlow: `main` ← `develop` ← `feature/fix` branches.
+GitFlow: `main` ← `dev` ← `feature/fix` branches.
 
 - Feature/fix branch names use **snake_case**.
 - `feat/<domain>_<feature>` — feature implementation + test code

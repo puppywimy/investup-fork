@@ -12,7 +12,7 @@ const prNumber  = process.env.PR_NUMBER;
 const prTitle   = process.env.PR_TITLE;
 const baseSha   = process.env.BASE_SHA;
 const headSha   = process.env.HEAD_SHA;
-const baseRef   = process.env.BASE_REF || process.env.GITHUB_BASE_REF || 'develop';
+const baseRef   = process.env.BASE_REF || process.env.GITHUB_BASE_REF || 'dev';
 const repo      = process.env.REPO;
 const ghToken   = process.env.GITHUB_TOKEN;
 

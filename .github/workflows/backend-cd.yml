@@ -2,7 +2,7 @@ name: Backend CD
 
 on:
   push:
-    branches: [develop]
+    branches: [dev]
     paths:
       - ".github/workflows/backend-cd.yml"
       - "back/src/**"
@@ -54,8 +54,8 @@ jobs:
           BRANCH_NAME="${GITHUB_REF_NAME}"
           BRANCH_SLUG=$(echo "$BRANCH_NAME" | tr '/_' '--')
 
-          # 3. develop 브랜치인 경우 커밋 타입(feat 등)에 따라 SemVer 증가
-          if [ "$BRANCH_NAME" = "develop" ]; then
+          # 3. dev 브랜치인 경우 커밋 타입(feat 등)에 따라 SemVer 증가
+          if [ "$BRANCH_NAME" = "dev" ]; then
             IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE_VERSION"
             LAST_MSG=$(git log -1 --pretty=%B)
             if echo "$LAST_MSG" | grep -qiE "feat(\(.*\))?:|Merge pull request.*feat/"; then

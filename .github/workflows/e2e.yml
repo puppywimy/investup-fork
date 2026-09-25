@@ -2,9 +2,9 @@ name: E2E
 
 on:
   pull_request:
-    branches: [develop, main]
+    branches: [dev, main]
   push:
-    branches: [develop, main]
+    branches: [dev, main]
   workflow_dispatch:
     inputs:
       suite:

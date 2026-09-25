@@ -116,8 +116,8 @@ ignored by Git; do not publish traces from sessions using real accounts.
 
 ## CI
 
-`.github/workflows/e2e.yml` runs smoke on PR updates to develop/main and the full suite
-on pushes to develop/main. Manual runs select smoke or full. A change-detection step
+`.github/workflows/e2e.yml` runs smoke on PR updates to dev/main and the full suite
+on pushes to dev/main. Manual runs select smoke or full. A change-detection step
 skips unrelated documentation changes while leaving a completed workflow check.
 Smoke totals 16 runs (12 desktop + 4 mobile); full totals 45 (38 desktop + 7 mobile).
 Both projects run serially with one worker and the same per-test cleanup policy.
