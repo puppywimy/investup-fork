@@ -227,8 +227,7 @@ class StockFinancialFlowIntegrationTest {
                     .filter(period -> period.getStockId().equals(stock.getStockId()))
                     .filter(period -> period.getPeriodType() == FinancialPeriodType.ANNUAL)
                     .toList();
-            if (TransactionSynchronizationManager.isCurrentTransactionReadOnly()
-                    && blocked.compareAndSet(false, true)) {
+            if (blocked.compareAndSet(false, true)) {
                 annualRead.countDown();
                 if (!releaseReader.await(5, TimeUnit.SECONDS)) {
                     throw new IllegalStateException("timed out waiting to release snapshot reader");
