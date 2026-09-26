@@ -402,3 +402,53 @@ resource "aws_eip_association" "ec2_1" {
 data "aws_s3_bucket" "asset" {
   bucket = var.bucket_name
 }
+
+resource "aws_iam_role" "scheduler_role_1" {
+  name = "${var.prefix}-scheduler-role-1"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Principal = {
+          Service = "scheduler.amazonaws.com"
+        }
+        Effect = "Allow"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "ec2_start" {
+  name = "${var.prefix}-scheduler-role-1-policy-ec2_start"
+  role = aws_iam_role.scheduler_role_1.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["ec2:StartInstances"]
+        Resource = aws_instance.ec2_1.arn
+      },
+    ]
+  })
+}
+
+resource "aws_scheduler_schedule" "ec2_1_start" {
+  name                         = "${var.prefix}-ec2-1-start"
+  schedule_expression          = "cron(10 18 * * ? *)"
+  schedule_expression_timezone = "Asia/Seoul"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  target {
+    arn      = "arn:aws:scheduler:::aws-sdk:ec2:startInstances"
+    role_arn = aws_iam_role.scheduler_role_1.arn
+    input = jsonencode({
+      InstanceIds = [aws_instance.ec2_1.id]
+    })
+  }
+}

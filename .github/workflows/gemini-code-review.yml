@@ -3,7 +3,7 @@ name: Gemini AI Code Review
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    branches: [ main, develop ]
+    branches: [ dev ]
 
 permissions:
   contents: read
