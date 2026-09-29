@@ -77,6 +77,7 @@ public final class E2eLauncher {
                 "--report.seed.enabled=false", "--cors.allowed-origins=http://127.0.0.1:13000",
                 "--auth.session.encryption-key=" + required("E2E_SESSION_KEY"),
                 "--auth.jwt.secret=" + Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8)),
+                "--auth.jwt.refresh-ttl=36500d",
                 "--logging.level.org.hibernate.SQL=OFF", "--logging.level.root=WARN",
                 "--spring.main.banner-mode=off");
     }
