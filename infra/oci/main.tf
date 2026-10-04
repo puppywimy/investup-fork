@@ -235,11 +235,12 @@ locals {
     "prometheus.tgz"
   ]
 
+  # OCI 정책에서 '...'는 정확히 일치, /.../는 와일드카드 패턴 → '*'가 있으면 /.../로 감싼다
   read_object_names  = concat(local.bucket_asset_keys, [for k in local.bucket_dump_keys : "dump/${k}"], ["scratch/*"])
   write_object_names = concat([for k in local.bucket_dump_keys : "dump/${k}"], ["scratch/*"])
 
-  read_object_cond  = join(", ", [for n in local.read_object_names : "target.object.name = '${n}'"])
-  write_object_cond = join(", ", [for n in local.write_object_names : "target.object.name = '${n}'"])
+  read_object_cond  = join(", ", [for n in local.read_object_names : strcontains(n, "*") ? "target.object.name = /${n}/" : "target.object.name = '${n}'"])
+  write_object_cond = join(", ", [for n in local.write_object_names : strcontains(n, "*") ? "target.object.name = /${n}/" : "target.object.name = '${n}'"])
 
   bootstrap = <<-EOF
   #!/bin/bash
