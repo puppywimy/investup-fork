@@ -11,12 +11,11 @@ on:
       - "back/Dockerfile"
 
 env:
-  IMAGE_NAME: nbe10-12-final-baedang
+  IMAGE_NAME: investup-fork
   CONTAINER_1_NAME: trading-back-1
   CONTAINER_2_NAME: trading-back-2
   APPLICATION_PORT: 8080
   DOCKERFILE_DIR: back
-  INSTANCE_TAG_NAME: baedang-ec2-1
   DOCKER_NETWORK: common
 
 concurrency:
@@ -113,7 +112,7 @@ jobs:
   buildAndPushDockerImage:
     name: 2. 도커 이미지 빌드 및 푸시
     needs: [createTagAndRelease]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
       packages: write
@@ -141,7 +140,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: ${{ env.DOCKERFILE_DIR }}
-          platforms: linux/amd64
+          platforms: linux/arm64
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -155,27 +154,11 @@ jobs:
     needs: [createTagAndRelease, buildAndPushDockerImage]
 
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: 인스턴스 퍼블릭 IP 조회
-        run: |
-          HOST=$(aws ec2 describe-instances \
-            --filters "Name=tag:Name,Values=${{ env.INSTANCE_TAG_NAME }}" "Name=instance-state-name,Values=running" \
-            --query "Reservations[0].Instances[0].PublicIpAddress" --output text)
-          if [ -z "$HOST" ] || [ "$HOST" = "None" ]; then
-            echo "실행 중인 인스턴스의 퍼블릭 IP를 찾지 못했습니다." && exit 1
-          fi
-          echo "HOST=$HOST" >> $GITHUB_ENV
-
       - name: Deploy via SSH
         env:
-          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          SSH_USER: ${{ secrets.EC2_USER }}
+          HOST: ${{ secrets.INSTANCE_HOST }}
+          SSH_KEY: ${{ secrets.INSTANCE_SSH_KEY }}
+          SSH_USER: ${{ secrets.INSTANCE_USER }}
         run: |
           OWNER_LC="${{ github.repository_owner }}"
           OWNER_LC="${OWNER_LC,,}"
